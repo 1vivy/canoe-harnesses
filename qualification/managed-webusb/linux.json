@@ -7,7 +7,16 @@
   "qemuRevision": "84f07211cc5b4fc6a371559bf8a5de4fb068e648",
   "qemuManagedPatchSha256": "e2b6596f8ee9f3db95a08f807948800886b00f9625303c3b94e167d2223122cf",
   "qemuBinarySha256": "32ab69b88e3cd6a091c99c3b652c1c275a4f1f5b13360a83e61efb14c97bd51a",
-  "guest": {"os": "Ubuntu 24.04", "kernel": "6.8.0-138-generic", "browser": "Chromium 141.0.7390.37", "sandbox": {"ordinaryBrowserSandbox": true, "rendererNoNewPrivs": 1, "rendererSeccomp": 2}},
+  "guest": {
+    "os": "Ubuntu 24.04",
+    "kernel": "6.8.0-138-generic",
+    "browser": "Chromium 141.0.7390.37",
+    "sandbox": {
+      "ordinaryBrowserSandbox": true,
+      "rendererNoNewPrivs": 1,
+      "rendererSeccomp": 2
+    }
+  },
   "artifacts": {
     "facadeWasmSha256": "02c0ccbff899bf24ac44ba11bb2d83c1b83e0528b2a68b7f6999645bdfbc666f",
     "filesystemWasmSha256": "5d72ca851da2fc1bc2edb27bcbc8f5bd52481b31694b5b28d3e0a152e04043d2",
@@ -32,12 +41,12 @@
     "fixtureGenerator": "tests/journal_mount_recovery.rs",
     "scope": "Plain JBD2 committed sequence42 plus uncommitted sequence43; retained full backup before writable mount",
     "result": "sequence44/start0; RECOVER cleared on finish; e2fsck -fn clean, committed inode0600 and volume label retained",
-    "browserSandbox": "This earlier recovery run used the isolated browser's --no-sandbox setup; the final ordinary-sandbox FAT/ext4 mutation runs are recorded separately"
+    "browserSandbox": "Ordinary Chromium sandbox; repeated with full raw-image hashes before and after read-only inspection",
+    "readOnlyFullImageUnchanged": true
   },
   "notQualified": [
     "physical phone browser writes or real CANOE-BDS USB descriptor byte equivalence",
     "checksummed pending journal recovery",
-    "Windows binding (tracked separately)",
     "automatic firmware disconnect after SCSI eject; QEMU fixture requires explicit device detach"
   ]
 }

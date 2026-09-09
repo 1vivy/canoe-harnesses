@@ -1,0 +1,11 @@
+{
+  "browser": "152.0.4191.66",
+  "physicalPhone": false,
+  "realGuestUsb": true,
+  "completedReads": 7,
+  "rangeBytes": 4194304,
+  "done": true,
+  "error": "storage protocol: WebUSB device close failed",
+  "usable": false,
+  "opened": false
+}

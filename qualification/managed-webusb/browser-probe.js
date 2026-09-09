@@ -51,3 +51,42 @@ export async function runFilesystemProbe(fixture, kind) {
   results.push({name:'remove-fresh-absence-sync-eject-close',ok:true});
   return {physicalPhone:false,realGuestUsb:true,results};
 }
+
+/** Plain JBD2 fixture generated independently by journal_mount_recovery.rs.
+ * The caller supplies SHA256 of the separately retained complete image.
+ */
+export async function runJournalProbe(fixture, backupSha256) {
+  const {api, openFilesystem, grant} = fixture;
+  let storage=fixture.storage;
+  if(!storage?.usable()||grant.serialNumber!=='CANOE_MANAGED'||!/^[a-f0-9]{64}$/.test(backupSha256))
+    throw Error('Expected open synthetic fixture and independently saved backup digest');
+  const rawHash=async()=>{
+    const size=storage.capacity().bytes;
+    if(size>64*1024*1024)throw Error('Journal qualification fixture exceeds64MiB');
+    const all=new Uint8Array(size);
+    for(let offset=0;offset<size;offset+=4194304)
+      all.set(await storage.readRange(BigInt(offset),Math.min(4194304,size-offset)),offset);
+    return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',all)),x=>x.toString(16).padStart(2,'0')).join('');
+  };
+  const beforeHash=await rawHash();
+  if(beforeHash!==backupSha256)throw Error('Retained full backup does not match fixture');
+  const fs=await openFilesystem({storage,kind:'ext4',access:'read-only'});
+  const before=await fs.inspect();
+  if(!before.needsRecovery||!before.journal.start)throw Error('Expected pending committed journal');
+  await fs.list('/');await fs.finish();await storage.close();
+  storage=fixture.storage=await api.openManagedStorage(grant,'read-only');
+  const afterReadOnlyHash=await rawHash();
+  if(afterReadOnlyHash!==beforeHash)throw Error('Read-only inspection mutated fixture');
+  await storage.close();
+  storage=fixture.storage=await api.openManagedStorage(grant,'read-write');
+  const mounted=await openFilesystem({storage,kind:'ext4',access:'read-write'});
+  const during=await mounted.inspect();
+  await mounted.finish();await storage.sync();await storage.close();
+  storage=fixture.storage=await api.openManagedStorage(grant,'read-only');
+  const fresh=await openFilesystem({storage,kind:'ext4',access:'read-only'});
+  const after=await fresh.inspect();
+  if(after.needsRecovery||after.journal.start)throw Error('Recovery was not finalized');
+  await fresh.finish();await storage.sync();await storage.eject();
+  if(storage.usable()||grant.opened)throw Error('Eject did not retire and close');
+  return {physicalPhone:false,realGuestUsb:true,beforeHash,afterReadOnlyHash,backupSha256,before,during,after};
+}

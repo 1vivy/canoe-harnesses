@@ -1,0 +1,28 @@
+{
+  "browser": "152.0.4191.66",
+  "physicalPhone": false,
+  "realGuestUsb": true,
+  "identity": {
+    "vendorId": 4617,
+    "productId": 51727,
+    "interface": 0,
+    "alternate": 0,
+    "interfaceClass": 255,
+    "interfaceSubclass": 6,
+    "interfaceProtocol": 80,
+    "maximumLun": 0,
+    "selectedLun": 0,
+    "access": "read-only",
+    "transport": "usb-bot-scsi",
+    "maxRangeBytes": 4194304
+  },
+  "capacity": {
+    "blocks": 131072,
+    "blockSize": 512,
+    "bytes": 67108864
+  },
+  "sha256": "5cc373f7b5d030852dcee74295773046d4e107f3e346630acf1df5434ccfd447",
+  "pairedReopen": true,
+  "ejected": true,
+  "opened": false
+}

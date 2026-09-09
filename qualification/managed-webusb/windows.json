@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-09",
+  "scope": "Production Rust WebUSB and filesystem-worker engines through the Windows USB/WinUSB stack and an isolated QEMU synthetic USB disk",
+  "physicalPhone": false,
+  "storageRevision": "5d49dc7c6a1eb3dfaa62ae4432894736f62ee92c",
+  "qemuRevision": "84f07211cc5b4fc6a371559bf8a5de4fb068e648",
+  "qemuBinarySha256": "9e388a0886a96f472273fdb53b564521a46aa9768400e1b70c07bc5ce0e2c385",
+  "qemuManagedPatchSha256": "e2b6596f8ee9f3db95a08f807948800886b00f9625303c3b94e167d2223122cf",
+  "containerImage": "dockurr/windows@sha256:0cff9eb0e7aee9953e55bc682852ca4fdca233145a58ae1ec94f0b0c01a2ed30",
+  "evaluationMedia": {
+    "source": "https://www.microsoft.com/en-us/evalcenter/evaluate-windows-11-enterprise",
+    "file": "26200.6584.250915-1905.25h2_ge_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso",
+    "sha256": "a61adeab895ef5a4db436e0a7011c92a2ff17bb0357f58b13bbc4062e535e7b9",
+    "license": "Windows Enterprise evaluation; isolated testing only; no product key or purchase"
+  },
+  "guest": {"os": "Windows 11 Enterprise Evaluation", "build": "26200", "browser": "Microsoft Edge 152.0.4191.66", "ordinaryBrowserSandbox": true},
+  "artifacts": {
+    "facadeWasmSha256": "02c0ccbff899bf24ac44ba11bb2d83c1b83e0528b2a68b7f6999645bdfbc666f",
+    "filesystemWasmSha256": "5d72ca851da2fc1bc2edb27bcbc8f5bd52481b31694b5b28d3e0a152e04043d2",
+    "note": "Same standalone production dependency facade and actual packaged filesystem assets as linux.json"
+  },
+  "passes": [
+    "automatic WINUSB binding with CM_PROB_NONE, USB MS_COMP_WINUSB compatible ID and registered DeviceInterfaceGUIDs",
+    "native Edge USB chooser; exact managed 1209:ca0f ff/06/50 interface; GET_MAX_LUN and capacity",
+    "real Rust worker FAT/ext4 create/write/rename/remove; fresh readback and unrelated ext4 file preserved",
+    "all six read-only filesystem mutations and raw writes refused; three fresh close/open cycles",
+    "SYNCHRONIZE CACHE, successful ordinary eject and awaited close",
+    "plain-JBD2 replay after matched external full-backup digest; full raw image unchanged across read-only inspection; clean finish",
+    "read-only hot-unplug retires session and closes device; fresh paired handle after re-enumeration reads exact backing sample, syncs and ejects",
+    "ordinary removable class08 disk binds USBSTOR, mounts FAT as F:, file write and Flush(true), unmount, independent fsck/readback"
+  ],
+  "oracles": {
+    "fat": "Detached fsck.fat -n exit0 for both managed and ordinary images",
+    "ext4": "Detached e2fsck -fn exit0",
+    "plainJournal": "Detached e2fsck -fn exit0; /oracle mode0600 and volume label journal-oracle; sequence44/start0 and RECOVER clear"
+  },
+  "observations": [
+    "Windows rejects the final close promise after hot-unplug even though USBDevice.opened is false; the facade surfaces that close failure and retires the session. Ordinary close/eject and a fresh reconnect succeed.",
+    "A partitionless FAT LUN must be removable for Windows automount. QEMU's fixed-disk default binds USBSTOR but has no volume. CANOE-BDS ImageDisk already sets the per-LUN removable property; the corrected manual fixture uses removable=on."
+  ],
+  "notQualified": [
+    "physical phone browser writes, USB controller passthrough or CANOE-BDS descriptor byte equivalence",
+    "checksummed pending-journal replay",
+    "automatic firmware disconnect on eject (QEMU requires explicit detach)",
+    "complete application GUI deployment or real Windows hardware"
+  ]
+}
