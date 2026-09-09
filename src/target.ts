@@ -111,7 +111,9 @@ export class Target {
         if (!spec || !("url" in spec)) throw new Error("Launch requires a browser URL profile; native application launch belongs in explicit setup hooks")
         this.browser = await chromium.launch({ executablePath: spec.executablePath, headless: spec.headless ?? true })
         this.ownedBrowser = true
-        const page = await this.browser.newPage()
+        // Manual headful sessions must follow the real window size. Playwright's
+        // default fixed viewport otherwise makes resizing appear broken in apps.
+        const page = await this.browser.newPage(spec.headless === false ? { viewport: null } : {})
         this.installPage(page)
         await page.goto(spec.url, { waitUntil: "domcontentloaded" })
         return { url: page.url() }
