@@ -1,0 +1,7 @@
+node_modules/
+.work/
+coverage/
+*.log
+.env
+*.pem
+id_ed25519*

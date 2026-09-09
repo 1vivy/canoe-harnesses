@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "browser-preview",
+  "platform": "linux",
+  "control": {
+    "kind": "local"
+  },
+  "browser": {
+    "url": "http://127.0.0.1:5178",
+    "headless": false
+  }
+}

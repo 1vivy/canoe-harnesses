@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "ksu-next",
+  "platform": "android",
+  "control": {
+    "kind": "adb",
+    "serial": "127.0.0.1:6520",
+    "expectedDevice": "vsoc_x86_64_only",
+    "managerPackage": "com.rifsxd.ksunext",
+    "kernelVersion": "33214"
+  },
+  "application": {
+    "managerPackage": "com.rifsxd.ksunext"
+  },
+  "hooks": {
+    "provision": {
+      "argv": [
+        "bash",
+        "hosts/android/provision/up.sh"
+      ],
+      "cwd": "..",
+      "timeoutMs": 3600000,
+      "env": {
+        "CANOE_E2E_ANDROID_MANAGER": "next"
+      }
+    }
+  }
+}

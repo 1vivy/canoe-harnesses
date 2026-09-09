@@ -1,0 +1,10 @@
+# Opt-in physical USB access for manual testing. No device is attached by default.
+# Start with compose.yaml plus this override, then attach only the selected port:
+#   device_add usb-host,id=canoe-phone,bus=xhci.0,hostbus=8,hostport=2.2
+# Port matching follows recovery / fastboot / mass-storage re-enumeration.
+services:
+  windows:
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb
+    device_cgroup_rules:
+      - 'c 189:* rwm'

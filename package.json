@@ -1,0 +1,8 @@
+{
+  "name": "canoe-harnesses", "version": "7.0.0-b5.0", "type": "module", "private": true,
+  "exports": {".": "./src/index.ts", "./driver/cdp": "./driver/cdp.ts", "./driver/webdriver": "./driver/webdriver.ts", "./ssh": "./hosts/common/ssh.ts", "./adb": "./hosts/android/adb.ts", "./windows": "./hosts/windows/control.ts"},
+  "bin": {"canoe-harnesses": "./src/cli.ts"},
+  "scripts": {"check": "tsc --noEmit", "test": "bun test"},
+  "dependencies": {"playwright-core": "1.56.1"},
+  "devDependencies": {"@types/bun": "1.3.10", "typescript": "5.9.3"}
+}

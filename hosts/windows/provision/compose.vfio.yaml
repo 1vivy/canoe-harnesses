@@ -1,0 +1,13 @@
+# Opt-in whole USB controller passthrough. Bind the reviewed, isolated controller
+# to vfio-pci first. Do not combine with compose.usb.yaml.
+services:
+  windows:
+    environment:
+      ARGUMENTS: "-L /usr/share/seabios -device pcie-root-port,id=canoe-usb-root,bus=pcie.0,addr=0x1c -device vfio-pci,host=${CANOE_E2E_VFIO_PCI:?Set the reviewed USB controller PCI address},bus=canoe-usb-root"
+    devices:
+      - /dev/vfio/vfio
+      - /dev/vfio/${CANOE_E2E_VFIO_GROUP:?Set its isolated IOMMU group}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1

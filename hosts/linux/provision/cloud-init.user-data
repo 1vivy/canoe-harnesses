@@ -1,0 +1,68 @@
+#cloud-config
+# Ubuntu 24.04 guest for the Linux tier of the e2e harness. The harness key is
+# appended by up.sh; everything else is static so the image is reproducible.
+hostname: canoe-e2e-linux
+users:
+  - name: canoe
+    groups: [sudo, disk, plugdev]
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: true
+    ssh_authorized_keys: []
+package_update: true
+package_upgrade: false
+packages:
+  # Native GUI runtimes and generic WebDriver support.
+  - build-essential
+  - curl
+  - git
+  - pkg-config
+  - libssl-dev
+  - libwebkit2gtk-4.1-dev
+  - libgtk-3-dev
+  - libayatana-appindicator3-dev
+  - librsvg2-dev
+  - patchelf
+  - webkit2gtk-driver
+  # Headless display and session bus for the app.
+  - xvfb
+  - dbus-x11
+  - x11-utils
+  # Elevation plumbing the specs exercise.
+  - policykit-1
+  - python3-dbus
+  - python3-gi
+  # Block-device tooling for /dev/vdb and the export gadget.
+  - util-linux
+  - mtools
+  - dosfstools
+  - sg3-utils
+  - unzip
+  - zip
+  - rsync
+write_files:
+  - path: /etc/polkit-1/rules.d/49-canoe-e2e-env.rules.disabled
+    permissions: "0644"
+    content: |
+      // Enabled by the harness ("auto-elevate" policy) by renaming away the
+      // .disabled suffix. pkexec runs /usr/bin/env, not the app, so that is
+      // the program the rule must name.
+      polkit.addRule(function(action, subject) {
+        if (action.id == "org.freedesktop.policykit.exec" &&
+            action.lookup("program") == "/usr/bin/env" &&
+            subject.user == "canoe") {
+          return polkit.Result.YES;
+        }
+      });
+  - path: /etc/profile.d/canoe-e2e.sh
+    permissions: "0644"
+    content: |
+      export PATH="$HOME/.cargo/bin:$HOME/.bun/bin:$PATH"
+      export WEBKIT_DISABLE_COMPOSITING_MODE=1
+      export WEBKIT_DISABLE_DMABUF_RENDERER=1
+runcmd:
+  - [ bash, -c, "sudo -u canoe -H bash -c 'curl -fsSL https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable'" ]
+  - [ bash, -c, "sudo -u canoe -H bash -c 'curl -fsSL https://bun.sh/install | bash'" ]
+  - [ bash, -c, "mkdir -p /opt/canoe && chown canoe:canoe /opt/canoe" ]
+  - [ bash, -c, "touch /var/lib/cloud/instance/canoe-provisioned" ]
+final_message: "canoe-e2e-linux provisioned after $UPTIME seconds"

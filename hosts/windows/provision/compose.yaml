@@ -1,0 +1,41 @@
+# Windows 11 guest for the e2e harness, built unattended by dockurr/windows.
+#
+# First `up` downloads the Windows 11 ISO from Microsoft and installs it
+# (20–40 min). C:\OEM\install.bat (staged from ./oem plus a generated
+# authorized_keys) runs once at first logon and turns the guest into a
+# harness node: OpenSSH server with PowerShell as the shell, a standard
+# user for the auto-deny UAC path, no sleep, Defender exclusions.
+#
+# State lives outside the repo under $CANOE_E2E_STATE (default
+# ~/.local/share/canoe-e2e). Never commit anything from there.
+services:
+  windows:
+    image: dockurr/windows@sha256:0cff9eb0e7aee9953e55bc682852ca4fdca233145a58ae1ec94f0b0c01a2ed30
+    container_name: canoe-e2e-windows
+    environment:
+      VERSION: "11"
+      DISK_SIZE: "96G"
+      DISK_FMT: "qcow2"
+      RAM_SIZE: "8G"
+      CPU_CORES: "4"
+      USERNAME: "canoe"
+      PASSWORD: "${CANOE_E2E_WIN_PASSWORD:-canoe-e2e}"
+      LANGUAGE: "English"
+      REGION: "en-US"
+      KEYBOARD: "en-US"
+      ARGUMENTS: "-L /usr/share/seabios"
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "127.0.0.1:8006:8006"
+      - "127.0.0.1:2222:22"
+    volumes:
+      - "${CANOE_E2E_STATE:?Set CANOE_E2E_STATE}/windows/qemu-system-x86_64:/usr/bin/qemu-system-x86_64:ro"
+      - "${CANOE_E2E_STATE:?Set CANOE_E2E_STATE}/windows/storage:/storage"
+      - "${CANOE_E2E_STATE:?Set CANOE_E2E_STATE}/windows/oem:/oem"
+      - "${CANOE_E2E_STATE:?Set CANOE_E2E_STATE}/windows/share:/data"
+    stop_grace_period: 2m
+    restart: "no"

@@ -1,0 +1,46 @@
+diff --git a/hw/usb/dev-storage-classic.c b/hw/usb/dev-storage-classic.c
+index 977151c..4b39b5b 100644
+--- a/hw/usb/dev-storage-classic.c
++++ b/hw/usb/dev-storage-classic.c
+@@ -52,6 +52,10 @@ static void usb_msd_storage_realize(USBDevice *dev, Error **errp)
+     blk_detach_dev(blk, DEVICE(s));
+     s->conf.blk = NULL;
+ 
++    s->fixture_desc = *usb_device_get_usb_desc(dev);
++    s->fixture_desc.id.idVendor = s->vendorid;
++    s->fixture_desc.id.idProduct = s->productid;
++    dev->usb_desc = &s->fixture_desc;
+     usb_desc_create_serial(dev);
+     usb_desc_init(dev);
+     dev->flags |= (1 << USB_DEV_FLAG_IS_SCSI_STORAGE);
+@@ -68,6 +72,8 @@ static void usb_msd_storage_realize(USBDevice *dev, Error **errp)
+ }
+ 
+ static const Property msd_properties[] = {
++    DEFINE_PROP_UINT16("vendorid", MSDState, vendorid, 0x46f4),
++    DEFINE_PROP_UINT16("productid", MSDState, productid, 0x0001),
+     DEFINE_BLOCK_PROPERTIES(MSDState, conf),
+     DEFINE_BLOCK_ERROR_PROPERTIES(MSDState, conf),
+     DEFINE_PROP_BOOL("removable", MSDState, removable, false),
+diff --git a/include/hw/usb/msd.h b/include/hw/usb/msd.h
+index 125d2c2..03e8e23 100644
+--- a/include/hw/usb/msd.h
++++ b/include/hw/usb/msd.h
+@@ -8,6 +8,7 @@
+  */
+ 
+ #include "hw/usb/usb.h"
++#include "hw/usb/desc.h"
+ #include "hw/scsi/scsi.h"
+ 
+ enum USBMSDMode {
+@@ -37,6 +38,9 @@ struct MSDState {
+     USBPacket *packet;
+     /* usb-storage only */
+     BlockConf conf;
++    USBDesc fixture_desc;
++    uint16_t vendorid;
++    uint16_t productid;
+     bool removable;
+     bool commandlog;
+     SCSIDevice *scsi_dev;
