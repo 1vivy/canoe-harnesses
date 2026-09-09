@@ -1,0 +1,136 @@
+{
+  "before": {
+    "allocationUnit": 4096,
+    "checkedWriteFormatSupported": true,
+    "deviceBytes": 33554432,
+    "features": {
+      "compat": 60,
+      "incompat": 582,
+      "roCompat": 107
+    },
+    "freeBytes": 27217920,
+    "freeInodes": 8180,
+    "journal": {
+      "compat": 0,
+      "error": 0,
+      "incompat": 1,
+      "roCompat": 0,
+      "sequence": 42,
+      "start": 1
+    },
+    "kind": "ext4",
+    "needsRecovery": true,
+    "orphanHead": 0,
+    "reservedBytes": 1675264,
+    "totalUnits": 8192,
+    "uuid": [
+      54,
+      9,
+      24,
+      99,
+      235,
+      175,
+      66,
+      199,
+      157,
+      110,
+      253,
+      141,
+      175,
+      162,
+      124,
+      201
+    ],
+    "writable": false
+  },
+  "during": {
+    "allocationUnit": 4096,
+    "checkedWriteFormatSupported": true,
+    "deviceBytes": 33554432,
+    "features": {
+      "compat": 60,
+      "incompat": 582,
+      "roCompat": 107
+    },
+    "freeBytes": 27217920,
+    "freeInodes": 8180,
+    "journal": {
+      "compat": 0,
+      "error": 0,
+      "incompat": 1,
+      "roCompat": 0,
+      "sequence": 44,
+      "start": 0
+    },
+    "kind": "ext4",
+    "needsRecovery": true,
+    "orphanHead": 0,
+    "reservedBytes": 1675264,
+    "totalUnits": 8192,
+    "uuid": [
+      54,
+      9,
+      24,
+      99,
+      235,
+      175,
+      66,
+      199,
+      157,
+      110,
+      253,
+      141,
+      175,
+      162,
+      124,
+      201
+    ],
+    "writable": true
+  },
+  "after": {
+    "allocationUnit": 4096,
+    "checkedWriteFormatSupported": true,
+    "deviceBytes": 33554432,
+    "features": {
+      "compat": 60,
+      "incompat": 578,
+      "roCompat": 107
+    },
+    "freeBytes": 27217920,
+    "freeInodes": 8180,
+    "journal": {
+      "compat": 0,
+      "error": 0,
+      "incompat": 1,
+      "roCompat": 0,
+      "sequence": 44,
+      "start": 0
+    },
+    "kind": "ext4",
+    "needsRecovery": false,
+    "orphanHead": 0,
+    "reservedBytes": 1675264,
+    "totalUnits": 8192,
+    "uuid": [
+      54,
+      9,
+      24,
+      99,
+      235,
+      175,
+      66,
+      199,
+      157,
+      110,
+      253,
+      141,
+      175,
+      162,
+      124,
+      201
+    ],
+    "writable": false
+  },
+  "backupSuppliedByFixture": true,
+  "physicalPhone": false
+}

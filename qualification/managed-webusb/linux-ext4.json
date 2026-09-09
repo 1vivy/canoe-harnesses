@@ -1,0 +1,121 @@
+{
+  "browser": "141.0.7390.37",
+  "physicalPhone": false,
+  "realGuestUsb": true,
+  "results": [
+    {
+      "name": "real-webusb-initialize",
+      "identity": {
+        "vendorId": 4617,
+        "productId": 51727,
+        "interface": 0,
+        "alternate": 0,
+        "interfaceClass": 255,
+        "interfaceSubclass": 6,
+        "interfaceProtocol": 80,
+        "maximumLun": 0,
+        "selectedLun": 0,
+        "access": "read-only",
+        "transport": "usb-bot-scsi",
+        "maxRangeBytes": 4194304
+      },
+      "capacity": {
+        "blocks": 131072,
+        "blockSize": 512,
+        "bytes": 67108864
+      }
+    },
+    {
+      "name": "first4096",
+      "sha256": "307b62704efaea1b636e97a063f84ce6aa57b7240f071bc8b72a82b1aaaf29a1"
+    },
+    {
+      "name": "real-worker-read-only",
+      "inspection": {
+        "allocationUnit": 1024,
+        "checkedWriteFormatSupported": true,
+        "deviceBytes": 67108864,
+        "features": {
+          "compat": 60,
+          "incompat": 578,
+          "roCompat": 123
+        },
+        "freeBytes": 57369600,
+        "freeInodes": 16370,
+        "journal": {
+          "compat": 0,
+          "error": 0,
+          "incompat": 0,
+          "roCompat": 0,
+          "sequence": 11,
+          "start": 0
+        },
+        "kind": "ext4",
+        "needsRecovery": false,
+        "orphanHead": 0,
+        "reservedBytes": 3354624,
+        "totalUnits": 65536,
+        "uuid": [
+          47,
+          202,
+          176,
+          200,
+          42,
+          226,
+          78,
+          183,
+          174,
+          182,
+          9,
+          164,
+          166,
+          189,
+          172,
+          228
+        ],
+        "writable": false
+      },
+      "files": [
+        {
+          "name": "lost+found",
+          "kind": "directory",
+          "size": 12288,
+          "inode": 11,
+          "generation": 0
+        },
+        {
+          "name": "foreign.txt",
+          "kind": "file",
+          "size": 35,
+          "inode": 12,
+          "generation": 0
+        },
+        {
+          "name": "qualification",
+          "kind": "directory",
+          "size": 1024,
+          "inode": 2049,
+          "generation": 89819721
+        }
+      ]
+    },
+    {
+      "name": "all-read-only-mutations-refused",
+      "ok": true
+    },
+    {
+      "name": "three-fresh-close-reopen-cycles",
+      "ok": true
+    },
+    {
+      "name": "write-rename-fresh-readback",
+      "bytes": 75,
+      "sha256": "faeaac9693f947fbe0cf69f89be5526f9e1af47831739f368b64168ec6e46c05",
+      "path": "/qualification-1788939010577"
+    },
+    {
+      "name": "remove-fresh-absence-sync-eject-close",
+      "ok": true
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+# Separate evaluation guest. No host USB nodes or PCI controller are passed in.
+# Invoke from an explicitly leased profile with an isolated CANOE_WEBUSB_STATE.
+services:
+  windows-webusb:
+    image: dockurr/windows@sha256:0cff9eb0e7aee9953e55bc682852ca4fdca233145a58ae1ec94f0b0c01a2ed30
+    container_name: canoe-e2e-webusb-windows
+    environment:
+      VERSION: "11e"
+      DISK_SIZE: "64G"
+      DISK_FMT: "qcow2"
+      RAM_SIZE: "6G"
+      CPU_CORES: "4"
+      USERNAME: "canoe"
+      PASSWORD: "canoe-e2e"
+      LANGUAGE: "English"
+      REGION: "en-US"
+      KEYBOARD: "en-US"
+      ARGUMENTS: >-
+        -L /usr/share/seabios
+        -device qemu-xhci,id=fixture-xhci
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    cap_add: [NET_ADMIN]
+    ports:
+      - "127.0.0.1:8007:8006"
+      - "127.0.0.1:2223:22"
+    volumes:
+      - "${CANOE_WEBUSB_STATE:?Use an isolated fixture directory}/qemu-system-x86_64:/usr/bin/qemu-system-x86_64:ro"
+      - "${CANOE_WEBUSB_STATE:?}/storage:/storage"
+      - "${CANOE_WEBUSB_STATE:?}/oem:/oem"
+      - "${CANOE_WEBUSB_STATE:?}/share:/data"
+      - "${CANOE_WEBUSB_STATE:?}/fixtures:/fixtures"
+    stop_grace_period: 2m
+    restart: "no"

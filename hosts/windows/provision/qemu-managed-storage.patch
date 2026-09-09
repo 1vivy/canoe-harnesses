@@ -1,0 +1,127 @@
+--- a/hw/usb/dev-storage-classic.c
++++ b/hw/usb/dev-storage-classic.c
+@@ -27,6 +27,36 @@
+     .load_request = usb_msd_load_request,
+ };
+ 
++/* The managed fixture keeps QEMU's BOT/SCSI engine and only changes the
++ * interface descriptor. Ordinary usb-storage remains class 08. */
++static const USBDescMSOS managed_msos = {
++    .CompatibleID = "WINUSB",
++    .DeviceInterfaceGUID = L"{CDB3B5AD-293B-4663-AA36-1AAE46463776}",
++};
++
++static const USBDescDevice *managed_device_desc(MSDState *s,
++                                               const USBDescDevice *src,
++                                               unsigned index)
++{
++    USBDescDevice *dev;
++    USBDescConfig *conf;
++    USBDescIface *iface;
++
++    if (!src) {
++        return NULL;
++    }
++    dev = &s->fixture_devices[index];
++    conf = &s->fixture_configs[index];
++    iface = &s->fixture_ifaces[index];
++    *dev = *src;
++    *conf = src->confs[0];
++    *iface = conf->ifs[0];
++    iface->bInterfaceClass = 0xff;
++    conf->ifs = iface;
++    dev->confs = conf;
++    return dev;
++}
++
+ static void usb_msd_storage_realize(USBDevice *dev, Error **errp)
+ {
+     MSDState *s = USB_STORAGE_DEV(dev);
+@@ -55,6 +85,12 @@
+     s->fixture_desc = *usb_device_get_usb_desc(dev);
+     s->fixture_desc.id.idVendor = s->vendorid;
+     s->fixture_desc.id.idProduct = s->productid;
++    if (s->managed) {
++        s->fixture_desc.full = managed_device_desc(s, s->fixture_desc.full, 0);
++        s->fixture_desc.high = managed_device_desc(s, s->fixture_desc.high, 1);
++        s->fixture_desc.super = managed_device_desc(s, s->fixture_desc.super, 2);
++        s->fixture_desc.msos = &managed_msos;
++    }
+     dev->usb_desc = &s->fixture_desc;
+     usb_desc_create_serial(dev);
+     usb_desc_init(dev);
+@@ -74,6 +110,7 @@
+ static const Property msd_properties[] = {
+     DEFINE_PROP_UINT16("vendorid", MSDState, vendorid, 0x46f4),
+     DEFINE_PROP_UINT16("productid", MSDState, productid, 0x0001),
++    DEFINE_PROP_BOOL("managed", MSDState, managed, false),
+     DEFINE_BLOCK_PROPERTIES(MSDState, conf),
+     DEFINE_BLOCK_ERROR_PROPERTIES(MSDState, conf),
+     DEFINE_PROP_BOOL("removable", MSDState, removable, false),
+--- a/include/hw/usb/msd.h
++++ b/include/hw/usb/msd.h
+@@ -39,6 +39,10 @@
+     /* usb-storage only */
+     BlockConf conf;
+     USBDesc fixture_desc;
++    USBDescDevice fixture_devices[3];
++    USBDescConfig fixture_configs[3];
++    USBDescIface fixture_ifaces[3];
++    bool managed;
+     uint16_t vendorid;
+     uint16_t productid;
+     bool removable;
+--- a/hw/usb/desc.h
++++ b/hw/usb/desc.h
+@@ -185,6 +185,7 @@
+ struct USBDescMSOS {
+     const char                *CompatibleID;
+     const wchar_t             *Label;
++    const wchar_t             *DeviceInterfaceGUID;
+     bool                      SelectiveSuspendEnabled;
+ };
+ 
+--- a/hw/usb/desc-msos.c
++++ b/hw/usb/desc-msos.c
+@@ -173,11 +173,41 @@
+     return length;
+ }
+ 
++/* A single GUID encoded as REG_MULTI_SZ, including both trailing NULs. */
++static int usb_desc_msos_prop_guid(uint8_t *dest, const wchar_t *guid)
++{
++    struct msos_prop *prop = (void *)dest;
++    struct msos_prop_data *data;
++    int length = sizeof(*prop);
++    int chars = wcslen(guid) + 2;
++    int i;
++
++    prop->dwPropertyDataType = cpu_to_le32(MSOS_REG_MULTI_SZ);
++    length += usb_desc_msos_prop_name(prop, L"DeviceInterfaceGUIDs");
++    data = (void *)(dest + length);
++    data->dwPropertyDataLength = cpu_to_le32(chars * 2);
++    length += sizeof(*data);
++    memset(data->bPropertyData, 0, chars * 2);
++    for (i = 0; guid[i]; i++) {
++        data->bPropertyData[i * 2] = usb_lo(guid[i]);
++        data->bPropertyData[i * 2 + 1] = usb_hi(guid[i]);
++    }
++    length += chars * 2;
++    prop->dwLength = cpu_to_le32(length);
++    return length;
++}
++
+ static int usb_desc_msos_prop(const USBDesc *desc, uint8_t *dest)
+ {
+     msos_prop_hdr *hdr = (void *)dest;
+     int length = sizeof(*hdr);
+     int count = 0;
++
++    if (desc->msos->DeviceInterfaceGUID) {
++        length += usb_desc_msos_prop_guid(dest + length,
++                                          desc->msos->DeviceInterfaceGUID);
++        count++;
++    }
+ 
+     if (desc->msos->Label) {
+         /*

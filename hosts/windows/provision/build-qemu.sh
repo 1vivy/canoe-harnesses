@@ -11,11 +11,15 @@ if [ ! -d "$state/qemu-src/.git" ]; then
   git clone --depth 1 --branch v11.1.0 https://gitlab.com/qemu-project/qemu.git "$state/qemu-src"
 fi
 [ "$(git -C "$state/qemu-src" rev-parse HEAD)" = "$revision" ]
+if git -C "$state/qemu-src" apply --reverse --check "$here/qemu-managed-storage.patch" 2>/dev/null; then
+  git -C "$state/qemu-src" apply --reverse "$here/qemu-managed-storage.patch"
+fi
 if git -C "$state/qemu-src" apply --check "$here/qemu-usb-identity.patch"; then
   git -C "$state/qemu-src" apply "$here/qemu-usb-identity.patch"
 else
   git -C "$state/qemu-src" apply --reverse --check "$here/qemu-usb-identity.patch"
 fi
+git -C "$state/qemu-src" apply "$here/qemu-managed-storage.patch"
 docker run --rm --name canoe-qemu-builder --entrypoint bash -v "$state/qemu-src:/src" "$base" -c '
 set -e
 echo "deb https://deb.debian.org/debian sid main" > /etc/apt/sources.list.d/canoe-build.list
@@ -28,4 +32,4 @@ ninja -C build -j8 qemu-system-x86_64
 '
 cp "$state/qemu-src/build/qemu-system-x86_64" "$state/qemu-system-x86_64.next"
 mv "$state/qemu-system-x86_64.next" "$state/qemu-system-x86_64"
-sha256sum "$state/qemu-system-x86_64" "$here/qemu-usb-identity.patch" > "$state/qemu-fixture.sha256"
+sha256sum "$state/qemu-system-x86_64" "$here/qemu-usb-identity.patch" "$here/qemu-managed-storage.patch" > "$state/qemu-fixture.sha256"

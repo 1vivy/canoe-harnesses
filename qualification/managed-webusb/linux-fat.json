@@ -1,0 +1,70 @@
+{
+  "browser": "141.0.7390.37",
+  "physicalPhone": false,
+  "realGuestUsb": true,
+  "results": [
+    {
+      "name": "real-webusb-initialize",
+      "identity": {
+        "vendorId": 4617,
+        "productId": 51727,
+        "interface": 0,
+        "alternate": 0,
+        "interfaceClass": 255,
+        "interfaceSubclass": 6,
+        "interfaceProtocol": 80,
+        "maximumLun": 0,
+        "selectedLun": 0,
+        "access": "read-only",
+        "transport": "usb-bot-scsi",
+        "maxRangeBytes": 4194304
+      },
+      "capacity": {
+        "blocks": 131072,
+        "blockSize": 512,
+        "bytes": 67108864
+      }
+    },
+    {
+      "name": "first4096",
+      "sha256": "36ec809941613b8eaa1c49346d10e7b5f5d4ae26b4117520a4c6cff56414c813"
+    },
+    {
+      "name": "real-worker-read-only",
+      "inspection": {
+        "allocationUnit": 512,
+        "deviceBytes": 67108864,
+        "dirty": false,
+        "freeBytes": 66057728,
+        "kind": "fat",
+        "totalUnits": 129022,
+        "writable": false
+      },
+      "files": [
+        {
+          "name": "qualification",
+          "kind": "directory",
+          "size": 0
+        }
+      ]
+    },
+    {
+      "name": "all-read-only-mutations-refused",
+      "ok": true
+    },
+    {
+      "name": "three-fresh-close-reopen-cycles",
+      "ok": true
+    },
+    {
+      "name": "write-rename-fresh-readback",
+      "bytes": 74,
+      "sha256": "eadf8daba46d9ad9d502505786689c1f6fb6b9c3f7f70e2984c1a0464f975169",
+      "path": "/qualification-1788939012306"
+    },
+    {
+      "name": "remove-fresh-absence-sync-eject-close",
+      "ok": true
+    }
+  ]
+}

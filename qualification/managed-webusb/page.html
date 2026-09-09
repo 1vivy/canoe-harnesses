@@ -1,0 +1,21 @@
+<!doctype html><meta charset="utf-8"><title>Managed USB fixture qualification</title>
+<button id="connect">Choose managed USB fixture</button><pre id="log"></pre>
+<script type="module">
+// Serve beside the consumer's actual built facade and filesystem assets.
+const query = new URLSearchParams(location.search);
+const api = await import(query.get('facade') ?? '/core/canoe_usb_web.js');
+await api.default();
+const {openFilesystem} = await import(query.get('filesystem') ?? '/engine/filesystem.js');
+const log = (kind, value) => { fixture.events.push({kind,value}); document.querySelector('#log').textContent=JSON.stringify(fixture.events,null,2); };
+window.fixture = {api,openFilesystem,events:[],storage:null,grant:null,error:null};
+document.querySelector('#connect').onclick=async()=>{
+ try {
+  if(fixture.storage?.usable()) throw Error('Close the existing fixture session before choosing again');
+  fixture.error=null;
+  const storage=await api.requestManagedStorage('read-only');
+  const grant=storage.usbDevice();
+  if(grant.serialNumber!=='CANOE_MANAGED') { await storage.close(); throw Error('Expected the synthetic CANOE_MANAGED fixture'); }
+  fixture.storage=storage;fixture.grant=grant;log('connected',{identity:storage.identity(),capacity:storage.capacity()});
+ } catch(error) { fixture.error=String(error);log('error',String(error)); }
+};
+</script>

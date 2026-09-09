@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-09",
+  "scope": "Production browser USB/FS engines through an isolated QEMU USB controller and Linux USB stack; synthetic backing images only",
+  "physicalPhone": false,
+  "storageRevision": "5d49dc7c6a1eb3dfaa62ae4432894736f62ee92c",
+  "qemuRevision": "84f07211cc5b4fc6a371559bf8a5de4fb068e648",
+  "qemuManagedPatchSha256": "e2b6596f8ee9f3db95a08f807948800886b00f9625303c3b94e167d2223122cf",
+  "qemuBinarySha256": "32ab69b88e3cd6a091c99c3b652c1c275a4f1f5b13360a83e61efb14c97bd51a",
+  "guest": {"os": "Ubuntu 24.04", "kernel": "6.8.0-138-generic", "browser": "Chromium 141.0.7390.37", "sandbox": {"ordinaryBrowserSandbox": true, "rendererNoNewPrivs": 1, "rendererSeccomp": 2}},
+  "artifacts": {
+    "facadeWasmSha256": "02c0ccbff899bf24ac44ba11bb2d83c1b83e0528b2a68b7f6999645bdfbc666f",
+    "filesystemWasmSha256": "5d72ca851da2fc1bc2edb27bcbc8f5bd52481b31694b5b28d3e0a152e04043d2",
+    "filesystemJsSha256": "740f856e903cfeb0851ddde78f6e8ed8d14224e00fdadc19229a19b1363d3c16",
+    "filesystemWorkerJsSha256": "a03c8bfcac2e6393c83c99308bf87e587e38ef24ec343a8de93067f48ff69372",
+    "note": "Standalone production dependency facade build, with the actual packaged application filesystem worker; no alternative USB or filesystem implementation"
+  },
+  "passes": [
+    "native USB chooser grant; exact 1209:ca0f ff/06/50 interface with no OS block node or mass-storage driver",
+    "GET_MAX_LUN, bounded normal UNIT_ATTENTION recovery, capacity, sample read against backing file",
+    "real worker FAT and ext4 create/write/rename/remove with fresh readback and all six read-only mutations refused",
+    "three fresh close/open cycles, SYNCHRONIZE CACHE, eject and awaited close",
+    "managed hot-unplug retires the session; fresh paired-device reopen reads the same backing sample",
+    "ordinary 1209:ca0e class08 binds Linux mass-storage, mounts and writes a separate FAT image",
+    "independent fsck.fat -n and e2fsck -fn pass on detached result images",
+    "real Microsoft OS control descriptors advertise WINUSB and a double-NUL-terminated DeviceInterfaceGUIDs property"
+  ],
+  "pendingJournal": {
+    "evidence": "linux-recovery.json",
+    "fixtureRepository": "https://github.com/1vivy/rust-fs-ext4",
+    "fixtureRevision": "8315da024dc352408fe9f005ee5618ac8c4ab29f",
+    "fixtureGenerator": "tests/journal_mount_recovery.rs",
+    "scope": "Plain JBD2 committed sequence42 plus uncommitted sequence43; retained full backup before writable mount",
+    "result": "sequence44/start0; RECOVER cleared on finish; e2fsck -fn clean, committed inode0600 and volume label retained",
+    "browserSandbox": "This earlier recovery run used the isolated browser's --no-sandbox setup; the final ordinary-sandbox FAT/ext4 mutation runs are recorded separately"
+  },
+  "notQualified": [
+    "physical phone browser writes or real CANOE-BDS USB descriptor byte equivalence",
+    "checksummed pending journal recovery",
+    "Windows binding (tracked separately)",
+    "automatic firmware disconnect after SCSI eject; QEMU fixture requires explicit device detach"
+  ]
+}
