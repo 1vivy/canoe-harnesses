@@ -3,8 +3,8 @@ import type { Driver } from "./types"
 
 /**
  * A minimal W3C WebDriver client with consumer-supplied capabilities.
- * WebKitGTK does not speak the Chrome DevTools Protocol, so this is the one
- * transport the Linux tier can use. Only what the `Driver` interface needs.
+ * Accepts an existing WebDriver service and consumer capabilities. Browser
+ * launches and native-application extensions stay in the consumer profile.
  */
 type Session = { readonly id: string; readonly base: string }
 
@@ -25,9 +25,9 @@ async function call<T>(session: Session | { readonly base: string }, method: str
 }
 
 export type WebDriverLaunch = {
-  /** tauri-driver's listen address, e.g. http://127.0.0.1:4444 */
+  /** WebDriver service address, e.g. http://127.0.0.1:4444. */
   readonly base: string
-  /** Absolute path of the app binary inside the toolkit layout. */
+  /** Browser capabilities or explicitly selected native-application extension. */
   readonly capabilities: Readonly<Record<string, unknown>>
   readonly args?: readonly string[]
   readonly timeoutMs?: number

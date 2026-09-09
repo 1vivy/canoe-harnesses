@@ -11,6 +11,8 @@ Validated on 2026-09-09 with Bun 1.4.0, TypeScript 5.9.3 and Playwright 1.56.1.
   inventing an application action.
 - Actual Chromium page launch, native Playwright click, DOM observation and PNG
   screenshot passed against a local generic page. Attach alone left it unopened.
+- A separate clone outside the project layout installed with its frozen lockfile
+  and passed the same strict check and all four lifecycle/browser checks.
 - The existing Linux guest was attached through SSH, observed and disconnected.
   It reported kernel `6.8.0-139-generic`. No provisioning, reset, guest staging,
   USB mutation or application launch was performed.
