@@ -1,0 +1,374 @@
+{
+  "schemaVersion": 1,
+  "repository": "canoe-harnesses",
+  "baselineCommit": "c5f32d145ff1311e31da758b4adbdb7cbf937355",
+  "consumedRevision": "c5f32d145ff1311e31da758b4adbdb7cbf937355",
+  "upstreamComparison": null,
+  "counting": "Each declared test and explicit subcase is listed; Rustdoc snippets and manual qualification cases are identified separately. Target-gated tests remain listed even when they cannot run on this host. Data fixtures/support scripts and historical reports are not test cases.",
+  "entries": [
+    {
+      "source": {
+        "name": "manual browser follows native window resizing without viewport emulation",
+        "path": "tests/browser-resize.test.ts",
+        "line": 8
+      },
+      "kind": "test",
+      "decision": "keep",
+      "contract": "Harness session leases and actual browser control: manual browser follows native window resizing without viewport emulation.",
+      "owner": "canoe-harnesses",
+      "layer": "host/browser integration",
+      "replacement": null,
+      "reason": "The implementation-owning repository already owns this contract; retain its coverage without reproducing the driver matrix in CBM.",
+      "origin": "project-owned",
+      "configuration": "DISPLAY required"
+    },
+    {
+      "source": {
+        "name": "attach preserves state, lease survives CLI exit, reset is explicit, close releases",
+        "path": "tests/sessions.test.ts",
+        "line": 24
+      },
+      "kind": "test",
+      "decision": "keep",
+      "contract": "Harness session leases and actual browser control: attach preserves state, lease survives CLI exit, reset is explicit, close releases.",
+      "owner": "canoe-harnesses",
+      "layer": "process and session integration",
+      "replacement": null,
+      "reason": "The implementation-owning repository already owns this contract; retain its coverage without reproducing the driver matrix in CBM.",
+      "origin": "project-owned",
+      "configuration": "default"
+    },
+    {
+      "source": {
+        "name": "b4 lock prevents new controller; dead lock can be reclaimed",
+        "path": "tests/sessions.test.ts",
+        "line": 45
+      },
+      "kind": "test",
+      "decision": "keep",
+      "contract": "Harness session leases and actual browser control: b4 lock prevents new controller; dead lock can be reclaimed.",
+      "owner": "canoe-harnesses",
+      "layer": "process and session integration",
+      "replacement": null,
+      "reason": "The implementation-owning repository already owns this contract; retain its coverage without reproducing the driver matrix in CBM.",
+      "origin": "project-owned",
+      "configuration": "default"
+    },
+    {
+      "source": {
+        "name": "provision runs ordered hooks; missing reset fails without guessing",
+        "path": "tests/sessions.test.ts",
+        "line": 57
+      },
+      "kind": "test",
+      "decision": "keep",
+      "contract": "Harness session leases and actual browser control: provision runs ordered hooks; missing reset fails without guessing.",
+      "owner": "canoe-harnesses",
+      "layer": "process and session integration",
+      "replacement": null,
+      "reason": "The implementation-owning repository already owns this contract; retain its coverage without reproducing the driver matrix in CBM.",
+      "origin": "project-owned",
+      "configuration": "default"
+    },
+    {
+      "source": {
+        "name": "real Chromium interaction and screenshot from independent directory",
+        "path": "tests/sessions.test.ts",
+        "line": 68
+      },
+      "kind": "test",
+      "decision": "keep",
+      "contract": "Harness session leases and actual browser control: real Chromium interaction and screenshot from independent directory.",
+      "owner": "canoe-harnesses",
+      "layer": "process and session integration",
+      "replacement": null,
+      "reason": "The implementation-owning repository already owns this contract; retain its coverage without reproducing the driver matrix in CBM.",
+      "origin": "project-owned",
+      "configuration": "default"
+    },
+    {
+      "source": {
+        "name": "fat/real-webusb-initialize",
+        "path": "qualification/managed-webusb/browser-probe.js",
+        "line": 16
+      },
+      "kind": "qualification case",
+      "decision": "keep",
+      "contract": "Actual guest USB controller and OS browser stack support the named managed storage operation; this is OS adapter qualification, not a simulated phone acceptance claim.",
+      "owner": "canoe-harnesses",
+      "layer": "real OS/USB fixture",
+      "origin": "project-owned",
+      "replacement": null,
+      "reason": "Runs the owning transport/worker composition; CBM should retain only its adapter and review contracts, not duplicate these filesystem/USB cases.",
+      "configuration": "fat; Linux Chromium or Windows Edge; explicitly leased synthetic disk only"
+    },
+    {
+      "source": {
+        "name": "fat/first4096",
+        "path": "qualification/managed-webusb/browser-probe.js",
+        "line": 18
+      },
+      "kind": "qualification case",
+      "decision": "keep",
+      "contract": "Actual guest USB controller and OS browser stack support the named managed storage operation; this is OS adapter qualification, not a simulated phone acceptance claim.",
+      "owner": "canoe-harnesses",
+      "layer": "real OS/USB fixture",
+      "origin": "project-owned",
+      "replacement": null,
+      "reason": "Runs the owning transport/worker composition; CBM should retain only its adapter and review contracts, not duplicate these filesystem/USB cases.",
+      "configuration": "fat; Linux Chromium or Windows Edge; explicitly leased synthetic disk only"
+    },
+    {
+      "source": {
+        "name": "fat/real-worker-read-only",
+        "path": "qualification/managed-webusb/browser-probe.js",
+        "line": 22
+      },
+      "kind": "qualification case",
+      "decision": "keep",
+      "contract": "Actual guest USB controller and OS browser stack support the named managed storage operation; this is OS adapter qualification, not a simulated phone acceptance claim.",
+      "owner": "canoe-harnesses",
+      "layer": "real OS/USB fixture",
+      "origin": "project-owned",
+      "replacement": null,
+      "reason": "Runs the owning transport/worker composition; CBM should retain only its adapter and review contracts, not duplicate these filesystem/USB cases.",
+      "configuration": "fat; Linux Chromium or Windows Edge; explicitly leased synthetic disk only"
+    },
+    {
+      "source": {
+        "name": "fat/all-read-only-mutations-refused",
+        "path": "qualification/managed-webusb/browser-probe.js",
+        "line": 29
+      },
+      "kind": "qualification case",
+      "decision": "keep",
+      "contract": "Actual guest USB controller and OS browser stack support the named managed storage operation; this is OS adapter qualification, not a simulated phone acceptance claim.",
+      "owner": "canoe-harnesses",
+      "layer": "real OS/USB fixture",
+      "origin": "project-owned",
+      "replacement": null,
+      "reason": "Runs the owning transport/worker composition; CBM should retain only its adapter and review contracts, not duplicate these filesystem/USB cases.",
+      "configuration": "fat; Linux Chromium or Windows Edge; explicitly leased synthetic disk only"
+    },
+    {
+      "source": {
+        "name": "fat/three-fresh-close-reopen-cycles",
+        "path": "qualification/managed-webusb/browser-probe.js",
+        "line": 31
+      },
+      "kind": "qualification case",
+      "decision": "keep",
+      "contract": "Actual guest USB controller and OS browser stack support the named managed storage operation; this is OS adapter qualification, not a simulated phone acceptance claim.",
+      "owner": "canoe-harnesses",
+      "layer": "real OS/USB fixture",
+      "origin": "project-owned",
+      "replacement": null,
+      "reason": "Runs the owning transport/worker composition; CBM should retain only its adapter and review contracts, not duplicate these filesystem/USB cases.",
+      "configuration": "fat; Linux Chromium or Windows Edge; explicitly leased synthetic disk only"
+    },
+    {
+      "source": {
+        "name": "fat/write-rename-fresh-readback",
+        "path": "qualification/managed-webusb/browser-probe.js",
+        "line": 42
+      },
+      "kind": "qualification case",
+      "decision": "keep",
+      "contract": "Actual guest USB controller and OS browser stack support the named managed storage operation; this is OS adapter qualification, not a simulated phone acceptance claim.",
+      "owner": "canoe-harnesses",
+      "layer": "real OS/USB fixture",
+      "origin": "project-owned",
+      "replacement": null,
+      "reason": "Runs the owning transport/worker composition; CBM should retain only its adapter and review contracts, not duplicate these filesystem/USB cases.",
+      "configuration": "fat; Linux Chromium or Windows Edge; explicitly leased synthetic disk only"
+    },
+    {
+      "source": {
+        "name": "fat/remove-fresh-absence-sync-eject-close",
+        "path": "qualification/managed-webusb/browser-probe.js",
+        "line": 51
+      },
+      "kind": "qualification case",
+      "decision": "keep",
+      "contract": "Actual guest USB controller and OS browser stack support the named managed storage operation; this is OS adapter qualification, not a simulated phone acceptance claim.",
+      "owner": "canoe-harnesses",
+      "layer": "real OS/USB fixture",
+      "origin": "project-owned",
+      "replacement": null,
+      "reason": "Runs the owning transport/worker composition; CBM should retain only its adapter and review contracts, not duplicate these filesystem/USB cases.",
+      "configuration": "fat; Linux Chromium or Windows Edge; explicitly leased synthetic disk only"
+    },
+    {
+      "source": {
+        "name": "ext4/real-webusb-initialize",
+        "path": "qualification/managed-webusb/browser-probe.js",
+        "line": 16
+      },
+      "kind": "qualification case",
+      "decision": "keep",
+      "contract": "Actual guest USB controller and OS browser stack support the named managed storage operation; this is OS adapter qualification, not a simulated phone acceptance claim.",
+      "owner": "canoe-harnesses",
+      "layer": "real OS/USB fixture",
+      "origin": "project-owned",
+      "replacement": null,
+      "reason": "Runs the owning transport/worker composition; CBM should retain only its adapter and review contracts, not duplicate these filesystem/USB cases.",
+      "configuration": "ext4; Linux Chromium or Windows Edge; explicitly leased synthetic disk only"
+    },
+    {
+      "source": {
+        "name": "ext4/first4096",
+        "path": "qualification/managed-webusb/browser-probe.js",
+        "line": 18
+      },
+      "kind": "qualification case",
+      "decision": "keep",
+      "contract": "Actual guest USB controller and OS browser stack support the named managed storage operation; this is OS adapter qualification, not a simulated phone acceptance claim.",
+      "owner": "canoe-harnesses",
+      "layer": "real OS/USB fixture",
+      "origin": "project-owned",
+      "replacement": null,
+      "reason": "Runs the owning transport/worker composition; CBM should retain only its adapter and review contracts, not duplicate these filesystem/USB cases.",
+      "configuration": "ext4; Linux Chromium or Windows Edge; explicitly leased synthetic disk only"
+    },
+    {
+      "source": {
+        "name": "ext4/real-worker-read-only",
+        "path": "qualification/managed-webusb/browser-probe.js",
+        "line": 22
+      },
+      "kind": "qualification case",
+      "decision": "keep",
+      "contract": "Actual guest USB controller and OS browser stack support the named managed storage operation; this is OS adapter qualification, not a simulated phone acceptance claim.",
+      "owner": "canoe-harnesses",
+      "layer": "real OS/USB fixture",
+      "origin": "project-owned",
+      "replacement": null,
+      "reason": "Runs the owning transport/worker composition; CBM should retain only its adapter and review contracts, not duplicate these filesystem/USB cases.",
+      "configuration": "ext4; Linux Chromium or Windows Edge; explicitly leased synthetic disk only"
+    },
+    {
+      "source": {
+        "name": "ext4/all-read-only-mutations-refused",
+        "path": "qualification/managed-webusb/browser-probe.js",
+        "line": 29
+      },
+      "kind": "qualification case",
+      "decision": "keep",
+      "contract": "Actual guest USB controller and OS browser stack support the named managed storage operation; this is OS adapter qualification, not a simulated phone acceptance claim.",
+      "owner": "canoe-harnesses",
+      "layer": "real OS/USB fixture",
+      "origin": "project-owned",
+      "replacement": null,
+      "reason": "Runs the owning transport/worker composition; CBM should retain only its adapter and review contracts, not duplicate these filesystem/USB cases.",
+      "configuration": "ext4; Linux Chromium or Windows Edge; explicitly leased synthetic disk only"
+    },
+    {
+      "source": {
+        "name": "ext4/three-fresh-close-reopen-cycles",
+        "path": "qualification/managed-webusb/browser-probe.js",
+        "line": 31
+      },
+      "kind": "qualification case",
+      "decision": "keep",
+      "contract": "Actual guest USB controller and OS browser stack support the named managed storage operation; this is OS adapter qualification, not a simulated phone acceptance claim.",
+      "owner": "canoe-harnesses",
+      "layer": "real OS/USB fixture",
+      "origin": "project-owned",
+      "replacement": null,
+      "reason": "Runs the owning transport/worker composition; CBM should retain only its adapter and review contracts, not duplicate these filesystem/USB cases.",
+      "configuration": "ext4; Linux Chromium or Windows Edge; explicitly leased synthetic disk only"
+    },
+    {
+      "source": {
+        "name": "ext4/write-rename-fresh-readback",
+        "path": "qualification/managed-webusb/browser-probe.js",
+        "line": 42
+      },
+      "kind": "qualification case",
+      "decision": "keep",
+      "contract": "Actual guest USB controller and OS browser stack support the named managed storage operation; this is OS adapter qualification, not a simulated phone acceptance claim.",
+      "owner": "canoe-harnesses",
+      "layer": "real OS/USB fixture",
+      "origin": "project-owned",
+      "replacement": null,
+      "reason": "Runs the owning transport/worker composition; CBM should retain only its adapter and review contracts, not duplicate these filesystem/USB cases.",
+      "configuration": "ext4; Linux Chromium or Windows Edge; explicitly leased synthetic disk only"
+    },
+    {
+      "source": {
+        "name": "ext4/remove-fresh-absence-sync-eject-close",
+        "path": "qualification/managed-webusb/browser-probe.js",
+        "line": 51
+      },
+      "kind": "qualification case",
+      "decision": "keep",
+      "contract": "Actual guest USB controller and OS browser stack support the named managed storage operation; this is OS adapter qualification, not a simulated phone acceptance claim.",
+      "owner": "canoe-harnesses",
+      "layer": "real OS/USB fixture",
+      "origin": "project-owned",
+      "replacement": null,
+      "reason": "Runs the owning transport/worker composition; CBM should retain only its adapter and review contracts, not duplicate these filesystem/USB cases.",
+      "configuration": "ext4; Linux Chromium or Windows Edge; explicitly leased synthetic disk only"
+    },
+    {
+      "source": {
+        "name": "plain-JBD2 guest recovery",
+        "path": "qualification/managed-webusb/browser-probe.js",
+        "line": 58
+      },
+      "kind": "qualification case",
+      "decision": "keep",
+      "contract": "A real guest/browser USB path preserves the fixture during read-only inspection and completes writable journal recovery before sync/eject.",
+      "owner": "canoe-harnesses",
+      "layer": "real OS/USB fixture",
+      "origin": "project-owned",
+      "replacement": null,
+      "reason": "Runs the owning transport/worker composition; CBM should retain only its adapter and review contracts, not duplicate these filesystem/USB cases.",
+      "configuration": "Linux/Windows journal fixture; explicit retained synthetic backup"
+    },
+    {
+      "source": {
+        "name": "paired device reconnect",
+        "path": "qualification/managed-webusb/paired-read.ts",
+        "line": 13
+      },
+      "kind": "qualification case",
+      "decision": "keep",
+      "contract": "Previously granted re-enumerated USB interface reopens, reads expected bytes and ejects cleanly.",
+      "owner": "canoe-harnesses",
+      "layer": "real OS/USB fixture",
+      "origin": "project-owned",
+      "replacement": null,
+      "reason": "Runs the owning transport/worker composition; CBM should retain only its adapter and review contracts, not duplicate these filesystem/USB cases.",
+      "configuration": "explicit qualification command"
+    },
+    {
+      "source": {
+        "name": "in-flight Windows USB disconnect",
+        "path": "qualification/managed-webusb/windows-unplug.ts",
+        "line": 28
+      },
+      "kind": "qualification case",
+      "decision": "keep",
+      "contract": "An actual synthetic-device unplug retires the session and settles the pending read.",
+      "owner": "canoe-harnesses",
+      "layer": "real OS/USB fixture",
+      "origin": "project-owned",
+      "replacement": null,
+      "reason": "Runs the owning transport/worker composition; CBM should retain only its adapter and review contracts, not duplicate these filesystem/USB cases.",
+      "configuration": "explicit qualification command"
+    }
+  ],
+  "supportNotTestCases": [
+    "qualification/managed-webusb/{descriptors.py,qmp-cycle.py,windows-cycle.ts}: fixture construction/hotplug controls",
+    "qualification/managed-webusb/*.json: profiles or historical evidence, not additional cases",
+    "hosts/{android,linux,macos,windows}: reusable drivers, retained; no OS/phone actions executed in this audit"
+  ],
+  "totals": {
+    "test": 5,
+    "qualification case": 17
+  },
+  "decisions": {
+    "keep": 22
+  }
+}
