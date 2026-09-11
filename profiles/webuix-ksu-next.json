@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "ksu-next",
+  "id": "webuix-ksu-next",
   "platform": "android",
   "control": {
     "kind": "adb",
@@ -12,14 +12,15 @@
   "hooks": {
     "provision": {
       "argv": [
-        "bash",
-        "hosts/android/provision/up.sh"
+        "bun",
+        "hosts/android/provision/webuix.ts"
       ],
       "cwd": "..",
-      "timeoutMs": 3600000,
-      "env": {
-        "CANOE_E2E_ANDROID_MANAGER": "next"
-      }
+      "timeoutMs": 180000
     }
+  },
+  "application": {
+    "webuiPackage": "com.dergoogler.mmrl.wx",
+    "webuiVersionCode": 438
   }
 }

@@ -64,10 +64,19 @@ export class Target {
       const device = await this.android!.shell("getprop ro.product.device")
       if (!/^vsoc_[a-zA-Z0-9_]+$/.test(device) || (control.expectedDevice && device !== control.expectedDevice)) throw new Error(`Unexpected virtual Android target: ${device}`)
       if (await this.android!.shell("getprop sys.boot_completed") !== "1") throw new Error("Guest is not booted; attach does not boot it")
-      if (control.managerPackage) {
-        if (!/^[A-Za-z0-9_.]+$/.test(control.managerPackage)) throw new Error("Invalid manager package")
-        const manager = await this.android!.shell(`pm path ${control.managerPackage}`)
-        if (!manager.startsWith("package:")) throw new Error(`Manager ${control.managerPackage} is not installed`)
+      const rootManager = control.rootManagerPackage ?? control.managerPackage
+      if (control.rootManagerPackage && control.managerPackage && control.rootManagerPackage !== control.managerPackage) throw new Error("Conflicting root manager packages")
+      for (const [role, name] of [["Root manager", rootManager], ["WebUI host", this.profile.application?.webuiPackage]]) {
+        if (!name) continue
+        if (!/^[A-Za-z0-9_.]+$/.test(name)) throw new Error(`Invalid ${role} package`)
+        if (!(await this.android!.shell(`pm path ${name}`)).startsWith("package:")) throw new Error(`${role} ${name} is not installed`)
+      }
+      const host = this.profile.application
+      if (host?.webuiVersionCode !== undefined) {
+        if (!host.webuiPackage || !Number.isSafeInteger(host.webuiVersionCode) || host.webuiVersionCode < 1) throw new Error("WebUI version requires a package and positive version code")
+        const info = await this.android!.shell(`dumpsys package ${host.webuiPackage}`)
+        const version = info.match(/\bversionCode=(\d+)\b/)?.[1]
+        if (version !== String(host.webuiVersionCode)) throw new Error(`WebUI host differs from profile: versionCode=${version ?? "unknown"}`)
       }
       if (control.kernelVersion) {
         const version = await this.android!.root("/data/adb/ksud debug version")
@@ -141,13 +150,26 @@ export class Target {
         return this.android.shell(`uiautomator dump ${path} >/dev/null && cat ${path}; rm -f ${path}`)
       }
       case "android-webview": {
+        if (this.browser) throw new Error("A browser is already attached")
         if (!this.android || !/^[A-Za-z0-9_.]+$/.test(action.package)) throw new Error("Android package required")
-        const pid = (await this.android.shell(`pidof ${action.package}`)).split(" ")[0]
-        if (!/^\d+$/.test(pid)) throw new Error("Selected Android app is not running")
+        const process = action.process ?? action.package
+        if (!/^[A-Za-z0-9_.]+(?::[A-Za-z0-9_.]+)?$/.test(process)) throw new Error("Invalid Android process")
+        const packages = await this.android.shell(`pm list packages -U ${action.package}`)
+        const appUid = packages.split("\n").find(line => line.startsWith(`package:${action.package} `))?.match(/\buid:(\d+)\b/)?.[1]
+        const pid = await this.android.shell(`pidof ${process}`)
+        if (!/^\d+$/.test(pid)) throw new Error("Selected Android process must have exactly one running PID")
+        const status = await this.android.root(`cat /proc/${pid}/status`)
+        if (!appUid || status.match(/^Uid:\s+(\d+)/m)?.[1] !== appUid) throw new Error("Selected WebView process does not belong to the Android package")
         const socket = `webview_devtools_remote_${pid}`
         if (!(await this.android.root("cat /proc/net/unix")).includes(`@${socket}`)) throw new Error("WebView debugging is not enabled; attach will not change app preferences")
         this.adbForward = await this.android.adb(["forward", "tcp:0", `localabstract:${socket}`])
-        await this.connectBrowser(`http://127.0.0.1:${this.adbForward}`, action.urlPattern)
+        try {
+          await this.connectBrowser(`http://127.0.0.1:${this.adbForward}`, action.urlPattern)
+        } catch (error) {
+          await this.android.adb(["forward", "--remove", `tcp:${this.adbForward}`])
+          this.adbForward = undefined
+          throw error
+        }
         return { attached: socket }
       }
     }
@@ -164,7 +186,7 @@ export class Target {
   }
   async capture() {
     const stem = `capture-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`
-    if (this.page) {
+    if (this.page && !this.page.isClosed()) {
       const path = join(this.evidenceDir, `${stem}.png`)
       await this.page.screenshot({ path, fullPage: true })
       return { path }

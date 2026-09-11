@@ -5,10 +5,10 @@ export type TargetProfile = {
   id: string
   platform: Platform
   control: { kind: "local" } | { kind: "ssh"; host: string; user: string; key: string; port?: number } |
-    { kind: "adb"; serial: string; expectedDevice?: string; managerPackage?: string; kernelVersion?: string }
+    { kind: "adb"; serial: string; expectedDevice?: string; rootManagerPackage?: string; /** Legacy root-provider field. */ managerPackage?: string; kernelVersion?: string }
   browser?: { cdpEndpoint: string; urlPattern?: string } | { url: string; executablePath?: string; headless?: boolean }
   qemu?: { container: string }
-  application?: { url?: string; executable?: string; moduleZip?: string; moduleId?: string; managerPackage?: string; consentIdentity?: string }
+  application?: { url?: string; executable?: string; moduleZip?: string; moduleId?: string; webuiPackage?: string; webuiVersionCode?: number; consentIdentity?: string }
   /** Only provision invokes provision/stage/setup. Attach never invokes hooks. */
   hooks?: Partial<Record<"provision" | "stage" | "setup" | "reset" | "logs" | "capture" | "close", Hook>>
 }
@@ -28,7 +28,7 @@ export type Interaction =
   | { kind: "android-tap"; x: number; y: number }
   | { kind: "android-text"; text: string }
   | { kind: "android-hierarchy" }
-  | { kind: "android-webview"; package: string; urlPattern?: string }
+  | { kind: "android-webview"; package: string; process?: string; urlPattern?: string }
   | { kind: "qemu"; argv: string[] }
   | { kind: "qemu-monitor"; command: string }
   | { kind: "windows-consent"; accept: boolean }

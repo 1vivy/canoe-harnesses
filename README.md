@@ -83,10 +83,49 @@ termination releases ownership; SIGKILL leaves a reclaimable dead-PID lock.
   launch, real secure-desktop UAC controls, native framebuffer/OCR, USB identity
   fixture and opt-in USB/controller passthrough definitions. The generic consent
   action requires the profile's expected executable/publisher identity.
-- **Android:** pinned Cuttlefish guest, standard KSU or KSU Next kernel/manager,
+- **Android:** pinned Cuttlefish guest, standard KSU or KSU Next root provider,
+  independently pinned official WebUI X Portable host,
   explicit loopback ADB, native key/tap/text/hierarchy/screenshots and optional
   already-enabled WebView CDP attachment. Attach checks identity; it never calls
   `set-manager`, modifies preferences, installs a module or resets the guest.
+
+### Android WebUI X
+
+`profiles/ksu.json` and `profiles/ksu-next.json` provision the root provider and
+kernel. `profiles/webuix-ksu.json` and `profiles/webuix-ksu-next.json` instead
+install the pinned official WebUI X Portable v438 APK into an **already booted,
+rooted** guest. These WebUI profiles never run the kernel provision recipe.
+Both kinds share the same Android lease. Use `attach` once setup is complete.
+
+`control.rootManagerPackage` identifies the root provider (the older
+`control.managerPackage` spelling remains accepted). `application.webuiPackage`
+and `webuiVersionCode` independently identify and check the WebUI host.
+The host pin, source commit and SHA-256 are in
+[`hosts/android/provision/webuix.ts`](hosts/android/provision/webuix.ts); provision
+records that provenance in the session evidence. Only the official APK is used.
+
+In the host's first-run UI, select the existing root provider and authorize its
+root request. For disposable-guest CDP qualification, enable **Settings →
+Developer → Developer Mode**. Attach does not enable debugging or grant root.
+Leave the other developer and process-lifecycle settings at their defaults.
+Stage the consumer's module explicitly, then launch the WebUI X activity with
+an owned module ID (the legacy KSU activity is a different host):
+
+```sh
+bun src/cli.ts interact SESSION_ID \
+  '{"kind":"command","root":true,"command":"am start -n com.dergoogler.mmrl.wx/.ui.activity.webui.WebUIActivity --es id OWNED_MODULE_ID"}'
+bun src/cli.ts interact SESSION_ID \
+  '{"kind":"android-webview","package":"com.dergoogler.mmrl.wx","process":"com.dergoogler.mmrl.process.webui","urlPattern":"^https://mui[.]kernelsu[.]org/"}'
+```
+
+Portable uses a separate WebUI process. The `process` selector checks that its
+UID belongs to the named package before forwarding its debugging socket; absent
+or ambiguous PIDs are rejected. Close removes only the owned ADB forward and
+CDP connection. Consumers own picker fixtures, module cleanup and acceptance.
+
+The [v438 guest record](docs/webuix-qualification-2026-09-11.md) qualifies these
+controls and records an upstream native-picker crash. Host installation and CDP
+attachment alone do not qualify a consumer's file-import flow.
 
 The scripts preserve the existing VM/container names and disks. Fresh provisioning
 is explicit and may take substantial time. Invoke mutable recipes through a
